@@ -58,6 +58,10 @@ type VultrBareMetalMachineSpec struct {
 	// +optional
 	StartupScriptID string `json:"script_id,omitempty"`
 
+	// StartupScriptRef is a reference to a VultrStartupScript CR in the same namespace. Takes precedence over StartupScriptID.
+	// +optional
+	StartupScriptRef *corev1.LocalObjectReference `json:"startupScriptRef,omitempty"`
+
 	// IPXEChainURL is the URL to chain-load iPXE from when booting the bare metal server.
 	// +optional
 	IPXEChainURL string `json:"ipxe_chain_url,omitempty"`
@@ -76,9 +80,17 @@ type VultrBareMetalMachineSpec struct {
 	// +optional
 	VPCID string `json:"vpc_id,omitempty"`
 
+	// VPCRef is a reference to a VultrVPC CR in the same namespace. Takes precedence over VPCID.
+	// +optional
+	VPCRef *corev1.LocalObjectReference `json:"vpcRef,omitempty"`
+
 	// ReservedIPv4 is the reserved IPv4 address to assign to the bare metal server.
 	// +optional
 	ReservedIPv4 string `json:"reserved_ipv4,omitempty"`
+
+	// ReservedIPRef is a reference to a VultrReservedIP CR in the same namespace. Takes precedence over ReservedIPv4.
+	// +optional
+	ReservedIPRef *corev1.LocalObjectReference `json:"reservedIPRef,omitempty"`
 
 	// MdiskMode is the RAID configuration for bare metal servers with multiple disks.
 	// +optional

@@ -37,6 +37,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
+	stderrors "errors"
+
 	"github.com/pkg/errors"
 	infrav1 "github.com/vultr/cluster-api-provider-vultr/api/v1beta1"
 	"github.com/vultr/cluster-api-provider-vultr/cloud/scope"
@@ -55,6 +57,7 @@ type VultrBareMetalMachineReconciler struct {
 //+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=vultrbaremetalmachines,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=vultrbaremetalmachines/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=vultrbaremetalmachines/finalizers,verbs=update
+//+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=vultrvpcs;vultrstartupscripts;vultrreservedips,verbs=get;list;watch
 
 func (r *VultrBareMetalMachineReconciler) Reconcile(ctx context.Context, req ctrl.Request) (_ ctrl.Result, reterr error) {
 	ctx, cancel := context.WithTimeout(ctx, reconciler.DefaultedLoopTimeout(r.ReconcileTimeout))
@@ -165,6 +168,41 @@ func (r *VultrBareMetalMachineReconciler) reconcileNormal(ctx context.Context, m
 	if machineScope.Machine.Spec.Bootstrap.DataSecretName == nil {
 		machineScope.Info("Bootstrap data secret reference is not yet available")
 		return reconcile.Result{}, nil
+	}
+
+	// Resolve CR references to Vultr IDs (in-memory only, not persisted).
+	if vultrBareMetalMachine.Spec.VPCRef != nil {
+		vpcID, err := resolveVPCRef(ctx, r.Client, vultrBareMetalMachine.Namespace, vultrBareMetalMachine.Spec.VPCRef)
+		if stderrors.Is(err, ErrResourceNotReady) {
+			machineScope.Info("VultrVPC referenced by VPCRef is not ready yet, requeuing")
+			return reconcile.Result{RequeueAfter: 10 * time.Second}, nil
+		}
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+		vultrBareMetalMachine.Spec.VPCID = vpcID
+	}
+	if vultrBareMetalMachine.Spec.StartupScriptRef != nil {
+		scriptID, err := resolveStartupScriptRef(ctx, r.Client, vultrBareMetalMachine.Namespace, vultrBareMetalMachine.Spec.StartupScriptRef)
+		if stderrors.Is(err, ErrResourceNotReady) {
+			machineScope.Info("VultrStartupScript referenced by StartupScriptRef is not ready yet, requeuing")
+			return reconcile.Result{RequeueAfter: 10 * time.Second}, nil
+		}
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+		vultrBareMetalMachine.Spec.StartupScriptID = scriptID
+	}
+	if vultrBareMetalMachine.Spec.ReservedIPRef != nil {
+		reservedIP, err := resolveReservedIPRef(ctx, r.Client, vultrBareMetalMachine.Namespace, vultrBareMetalMachine.Spec.ReservedIPRef)
+		if stderrors.Is(err, ErrResourceNotReady) {
+			machineScope.Info("VultrReservedIP referenced by ReservedIPRef is not ready yet, requeuing")
+			return reconcile.Result{RequeueAfter: 10 * time.Second}, nil
+		}
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+		vultrBareMetalMachine.Spec.ReservedIPv4 = reservedIP
 	}
 
 	r.Recorder.Event(vultrBareMetalMachine, corev1.EventTypeNormal, "BareMetalServiceInitializing", "Initializing bare metal service")

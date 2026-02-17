@@ -90,6 +90,21 @@ spec:
                         description: ReservedIPv4 is the reserved IPv4 address to
                           assign to the bare metal server.
                         type: string
+                      reservedIPRef:
+                        description: ReservedIPRef is a reference to a VultrReservedIP
+                          CR in the same namespace. Takes precedence over ReservedIPv4.
+                        properties:
+                          name:
+                            default: ""
+                            description: |-
+                              Name of the referent.
+                              This field is effectively required, but due to backwards compatibility is
+                              allowed to be empty. Instances of this type with an empty value here are
+                              almost certainly wrong.
+                              More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                            type: string
+                        type: object
+                        x-kubernetes-map-type: atomic
                       script_id:
                         description: StartupScriptID is the Vultr startup script ID
                           to execute on the bare metal server.
@@ -100,11 +115,41 @@ spec:
                         items:
                           type: string
                         type: array
+                      startupScriptRef:
+                        description: StartupScriptRef is a reference to a VultrStartupScript
+                          CR in the same namespace. Takes precedence over StartupScriptID.
+                        properties:
+                          name:
+                            default: ""
+                            description: |-
+                              Name of the referent.
+                              This field is effectively required, but due to backwards compatibility is
+                              allowed to be empty. Instances of this type with an empty value here are
+                              almost certainly wrong.
+                              More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                            type: string
+                        type: object
+                        x-kubernetes-map-type: atomic
                       vpc_id:
                         description: |-
                           VPCID is the id of the VPC to be attached after creation.
                           Note: Bare metal VPC attachment is performed after server creation.
                         type: string
+                      vpcRef:
+                        description: VPCRef is a reference to a VultrVPC CR in the
+                          same namespace. Takes precedence over VPCID.
+                        properties:
+                          name:
+                            default: ""
+                            description: |-
+                              Name of the referent.
+                              This field is effectively required, but due to backwards compatibility is
+                              allowed to be empty. Instances of this type with an empty value here are
+                              almost certainly wrong.
+                              More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                            type: string
+                        type: object
+                        x-kubernetes-map-type: atomic
                     required:
                     - region
                     type: object

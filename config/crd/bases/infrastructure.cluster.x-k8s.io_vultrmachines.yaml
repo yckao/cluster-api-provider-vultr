@@ -65,6 +65,21 @@ spec:
               firewall_group_id:
                 description: The Vultr firewall group ID to attach to the instance
                 type: string
+              firewallGroupRef:
+                description: FirewallGroupRef is a reference to a VultrFirewallGroup
+                  CR in the same namespace. Takes precedence over FirewallGroupID.
+                properties:
+                  name:
+                    default: ""
+                    description: |-
+                      Name of the referent.
+                      This field is effectively required, but due to backwards compatibility is
+                      allowed to be empty. Instances of this type with an empty value here are
+                      almost certainly wrong.
+                      More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                    type: string
+                type: object
+                x-kubernetes-map-type: atomic
               planID:
                 description: PlanID is the id of Vultr VPS plan (VPSPLANID).
                 type: string
@@ -97,6 +112,21 @@ spec:
                   Deprecated: VPC2 is no longer supported and functionality will cease in a
                   future release
                 type: string
+              vpcRef:
+                description: VPCRef is a reference to a VultrVPC CR in the same namespace.
+                  Takes precedence over VPCID.
+                properties:
+                  name:
+                    default: ""
+                    description: |-
+                      Name of the referent.
+                      This field is effectively required, but due to backwards compatibility is
+                      allowed to be empty. Instances of this type with an empty value here are
+                      almost certainly wrong.
+                      More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                    type: string
+                type: object
+                x-kubernetes-map-type: atomic
             required:
             - region
             type: object

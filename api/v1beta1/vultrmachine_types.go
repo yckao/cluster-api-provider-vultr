@@ -60,9 +60,17 @@ type VultrMachineSpec struct {
 	//VPCOnly indicates that the VPS will not receive a public IP or public NIC when true.
 	VPCOnly bool `json:"vpc_only,omitempty"`
 
+	// VPCRef is a reference to a VultrVPC CR in the same namespace. Takes precedence over VPCID.
+	// +optional
+	VPCRef *corev1.LocalObjectReference `json:"vpcRef,omitempty"`
+
 	//The Vultr firewall group ID to attach to the instance
 	// +optional
 	FirewallGroupID string `json:"firewall_group_id,omitempty"`
+
+	// FirewallGroupRef is a reference to a VultrFirewallGroup CR in the same namespace. Takes precedence over FirewallGroupID.
+	// +optional
+	FirewallGroupRef *corev1.LocalObjectReference `json:"firewallGroupRef,omitempty"`
 
 	// VPC2ID is the id of the VPC2.0 to be attached.
 	// Deprecated: VPC2 is no longer supported and functionality will cease in a

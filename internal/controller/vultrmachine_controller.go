@@ -37,6 +37,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
+	stderrors "errors"
+
 	"github.com/pkg/errors"
 	infrav1 "github.com/vultr/cluster-api-provider-vultr/api/v1beta1"
 	"github.com/vultr/cluster-api-provider-vultr/cloud/scope"
@@ -55,6 +57,7 @@ type VultrMachineReconciler struct {
 //+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=vultrmachines,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=vultrmachines/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=vultrmachines/finalizers,verbs=update
+//+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=vultrvpcs;vultrfirewallgroups,verbs=get;list;watch
 
 // +kubebuilder:rbac:groups=cluster.x-k8s.io,resources=clusters,verbs=get;watch;list
 // +kubebuilder:rbac:groups=cluster.x-k8s.io,resources=machines,verbs=get;watch;list
@@ -170,6 +173,30 @@ func (r *VultrMachineReconciler) reconcileNormal(ctx context.Context, machineSco
 	if machineScope.Machine.Spec.Bootstrap.DataSecretName == nil {
 		machineScope.Info("Bootstrap data secret reference is not yet available")
 		return reconcile.Result{}, nil
+	}
+
+	// Resolve CR references to Vultr IDs (in-memory only, not persisted).
+	if vultrmachine.Spec.VPCRef != nil {
+		vpcID, err := resolveVPCRef(ctx, r.Client, vultrmachine.Namespace, vultrmachine.Spec.VPCRef)
+		if stderrors.Is(err, ErrResourceNotReady) {
+			machineScope.Info("VultrVPC referenced by VPCRef is not ready yet, requeuing")
+			return reconcile.Result{RequeueAfter: 10 * time.Second}, nil
+		}
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+		vultrmachine.Spec.VPCID = vpcID
+	}
+	if vultrmachine.Spec.FirewallGroupRef != nil {
+		fwID, err := resolveFirewallGroupRef(ctx, r.Client, vultrmachine.Namespace, vultrmachine.Spec.FirewallGroupRef)
+		if stderrors.Is(err, ErrResourceNotReady) {
+			machineScope.Info("VultrFirewallGroup referenced by FirewallGroupRef is not ready yet, requeuing")
+			return reconcile.Result{RequeueAfter: 10 * time.Second}, nil
+		}
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+		vultrmachine.Spec.FirewallGroupID = fwID
 	}
 
 	r.Recorder.Event(vultrmachine, corev1.EventTypeNormal, "InstanceServiceInitializing", "Initializing instance service")

@@ -239,10 +239,25 @@ func (in *VultrBareMetalMachineSpec) DeepCopyInto(out *VultrBareMetalMachineSpec
 		*out = new(string)
 		**out = **in
 	}
+	if in.StartupScriptRef != nil {
+		in, out := &in.StartupScriptRef, &out.StartupScriptRef
+		*out = new(v1.LocalObjectReference)
+		**out = **in
+	}
 	if in.SSHKey != nil {
 		in, out := &in.SSHKey, &out.SSHKey
 		*out = make([]string, len(*in))
 		copy(*out, *in)
+	}
+	if in.VPCRef != nil {
+		in, out := &in.VPCRef, &out.VPCRef
+		*out = new(v1.LocalObjectReference)
+		**out = **in
+	}
+	if in.ReservedIPRef != nil {
+		in, out := &in.ReservedIPRef, &out.ReservedIPRef
+		*out = new(v1.LocalObjectReference)
+		**out = **in
 	}
 }
 
@@ -819,6 +834,16 @@ func (in *VultrMachineSpec) DeepCopyInto(out *VultrMachineSpec) {
 		in, out := &in.SSHKey, &out.SSHKey
 		*out = make([]string, len(*in))
 		copy(*out, *in)
+	}
+	if in.VPCRef != nil {
+		in, out := &in.VPCRef, &out.VPCRef
+		*out = new(v1.LocalObjectReference)
+		**out = **in
+	}
+	if in.FirewallGroupRef != nil {
+		in, out := &in.FirewallGroupRef, &out.FirewallGroupRef
+		*out = new(v1.LocalObjectReference)
+		**out = **in
 	}
 }
 
