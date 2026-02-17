@@ -63,10 +63,31 @@ spec:
           spec:
             description: VultrBareMetalMachineSpec defines the desired state of VultrBareMetalMachine
             properties:
-              firewall_group_id:
-                description: The Vultr firewall group ID to attach to the bare metal
-                  server.
+              app_id:
+                description: AppID is the Vultr marketplace application ID to deploy
+                  on the bare metal server.
+                type: integer
+              image_id:
+                description: ImageID is the Vultr image ID to use when deploying the
+                  bare metal server.
                 type: string
+              ipxe_chain_url:
+                description: IPXEChainURL is the URL to chain-load iPXE from when
+                  booting the bare metal server.
+                type: string
+              mdisk_mode:
+                description: MdiskMode is the RAID configuration for bare metal servers
+                  with multiple disks.
+                type: string
+              os_id:
+                description: OsID is the Vultr OS ID to use when deploying the bare
+                  metal server.
+                type: integer
+              persistent_pxe:
+                description: |-
+                  PersistentPxe enables persistent PXE booting for the bare metal server.
+                  When true, the server will always boot from PXE.
+                type: boolean
               planID:
                 description: PlanID is the id of Vultr bare metal plan.
                 type: string
@@ -75,11 +96,15 @@ spec:
                   cloud provider.
                 type: string
               region:
-                description: The Vultr Region (DCID) the cluster lives on
+                description: The Vultr Region (DCID) the cluster lives on.
                 type: string
-              snapshot_id:
-                description: The Vultr snapshot_id to use when deploying this bare
-                  metal server.
+              reserved_ipv4:
+                description: ReservedIPv4 is the reserved IPv4 address to assign to
+                  the bare metal server.
+                type: string
+              script_id:
+                description: StartupScriptID is the Vultr startup script ID to execute
+                  on the bare metal server.
                 type: string
               sshKey:
                 description: sshKey is the name of the ssh key to attach to the bare
@@ -88,7 +113,9 @@ spec:
                   type: string
                 type: array
               vpc_id:
-                description: VPCID is the id of the VPC to be attached after creation.
+                description: |-
+                  VPCID is the id of the VPC to be attached after creation.
+                  Note: Bare metal VPC attachment is performed after server creation.
                 type: string
             required:
             - region

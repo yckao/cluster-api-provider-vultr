@@ -35,27 +35,54 @@ type VultrBareMetalMachineSpec struct {
 	// +optional
 	ProviderID *string `json:"providerID,omitempty"`
 
-	// The Vultr snapshot_id to use when deploying this bare metal server.
-	Snapshot string `json:"snapshot_id,omitempty"`
-
 	// PlanID is the id of Vultr bare metal plan.
 	PlanID string `json:"planID,omitempty"`
 
-	// The Vultr Region (DCID) the cluster lives on
+	// The Vultr Region (DCID) the cluster lives on.
 	// +kubebuilder:validation:Required
 	Region string `json:"region"`
+
+	// OsID is the Vultr OS ID to use when deploying the bare metal server.
+	// +optional
+	OsID int `json:"os_id,omitempty"`
+
+	// ImageID is the Vultr image ID to use when deploying the bare metal server.
+	// +optional
+	ImageID string `json:"image_id,omitempty"`
+
+	// AppID is the Vultr marketplace application ID to deploy on the bare metal server.
+	// +optional
+	AppID int `json:"app_id,omitempty"`
+
+	// StartupScriptID is the Vultr startup script ID to execute on the bare metal server.
+	// +optional
+	StartupScriptID string `json:"script_id,omitempty"`
+
+	// IPXEChainURL is the URL to chain-load iPXE from when booting the bare metal server.
+	// +optional
+	IPXEChainURL string `json:"ipxe_chain_url,omitempty"`
+
+	// PersistentPxe enables persistent PXE booting for the bare metal server.
+	// When true, the server will always boot from PXE.
+	// +optional
+	PersistentPxe bool `json:"persistent_pxe,omitempty"`
 
 	// sshKey is the name of the ssh key to attach to the bare metal server.
 	// +optional
 	SSHKey []string `json:"sshKey,omitempty"`
 
 	// VPCID is the id of the VPC to be attached after creation.
+	// Note: Bare metal VPC attachment is performed after server creation.
 	// +optional
 	VPCID string `json:"vpc_id,omitempty"`
 
-	// The Vultr firewall group ID to attach to the bare metal server.
+	// ReservedIPv4 is the reserved IPv4 address to assign to the bare metal server.
 	// +optional
-	FirewallGroupID string `json:"firewall_group_id,omitempty"`
+	ReservedIPv4 string `json:"reserved_ipv4,omitempty"`
+
+	// MdiskMode is the RAID configuration for bare metal servers with multiple disks.
+	// +optional
+	MdiskMode string `json:"mdisk_mode,omitempty"`
 }
 
 // VultrBareMetalMachineStatus defines the observed state of VultrBareMetalMachine

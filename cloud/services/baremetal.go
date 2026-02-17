@@ -84,16 +84,28 @@ func (s *Service) CreateBareMetalServer(machineScope *scope.BareMetalMachineScop
 	clusterName := s.scope.Name()
 	serverName := machineScope.Name()
 
+	spec := machineScope.VultrBareMetalMachine.Spec
+
 	s.scope.V(2).Info("Preparing bare metal server creation request payload")
 	bmCreateReq := &govultr.BareMetalCreate{
-		Label:      serverName,
-		Hostname:   serverName,
-		Region:     machineScope.VultrBareMetalMachine.Spec.Region,
-		Plan:       machineScope.VultrBareMetalMachine.Spec.PlanID,
-		SSHKeyIDs:  sshKeyIDs,
-		SnapshotID: machineScope.VultrBareMetalMachine.Spec.Snapshot,
-		UserData:   encodedBootstrapData,
-		EnableIPv6: util.Pointer(true),
+		Label:           serverName,
+		Hostname:        serverName,
+		Region:          spec.Region,
+		Plan:            spec.PlanID,
+		OsID:            spec.OsID,
+		ImageID:         spec.ImageID,
+		AppID:           spec.AppID,
+		StartupScriptID: spec.StartupScriptID,
+		IPXEChainURL:    spec.IPXEChainURL,
+		SSHKeyIDs:       sshKeyIDs,
+		UserData:        encodedBootstrapData,
+		EnableIPv6:      util.Pointer(true),
+		ReservedIPv4:    spec.ReservedIPv4,
+		MdiskMode:       spec.MdiskMode,
+	}
+
+	if spec.PersistentPxe {
+		bmCreateReq.PersistentPxe = util.Pointer(true)
 	}
 
 	s.scope.V(2).Info("Building bare metal server tags")
