@@ -142,6 +142,12 @@ type VultrMachineTemplateResource struct {
 	Spec VultrMachineSpec `json:"spec"`
 }
 
+// VultrBareMetalMachineTemplateResource describes the data needed to create a VultrBareMetalMachine from a template.
+type VultrBareMetalMachineTemplateResource struct {
+	// Spec is the specification of the desired behavior of the bare metal machine.
+	Spec VultrBareMetalMachineSpec `json:"spec"`
+}
+
 // ApplyDefaults sets default values for VultrLoadBalancer fields if they are not set.
 func (in *VultrLoadBalancer) ApplyDefaults() {
 	// Set default for HealthCheck if it is not initialized

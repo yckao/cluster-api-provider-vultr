@@ -1,0 +1,93 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.17.1
+  name: vultrbaremetalmachinetemplates.infrastructure.cluster.x-k8s.io
+spec:
+  group: infrastructure.cluster.x-k8s.io
+  names:
+    categories:
+    - cluster-api
+    kind: VultrBareMetalMachineTemplate
+    listKind: VultrBareMetalMachineTemplateList
+    plural: vultrbaremetalmachinetemplates
+    shortNames:
+    - vbmmt
+    singular: vultrbaremetalmachinetemplate
+  scope: Namespaced
+  versions:
+  - name: v1beta1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: VultrBareMetalMachineTemplateSpec defines the desired state
+              of VultrBareMetalMachineTemplate
+            properties:
+              template:
+                description: VultrBareMetalMachineTemplateResource describes the data
+                  needed to create a VultrBareMetalMachine from a template.
+                properties:
+                  spec:
+                    description: Spec is the specification of the desired behavior
+                      of the bare metal machine.
+                    properties:
+                      firewall_group_id:
+                        description: The Vultr firewall group ID to attach to the
+                          bare metal server.
+                        type: string
+                      planID:
+                        description: PlanID is the id of Vultr bare metal plan.
+                        type: string
+                      providerID:
+                        description: ProviderID is the unique identifier as specified
+                          by the cloud provider.
+                        type: string
+                      region:
+                        description: The Vultr Region (DCID) the cluster lives on
+                        type: string
+                      snapshot_id:
+                        description: The Vultr snapshot_id to use when deploying this
+                          bare metal server.
+                        type: string
+                      sshKey:
+                        description: sshKey is the name of the ssh key to attach to
+                          the bare metal server.
+                        items:
+                          type: string
+                        type: array
+                      vpc_id:
+                        description: VPCID is the id of the VPC to be attached after
+                          creation.
+                        type: string
+                    required:
+                    - region
+                    type: object
+                required:
+                - spec
+                type: object
+            required:
+            - template
+            type: object
+        type: object
+    served: true
+    storage: true
