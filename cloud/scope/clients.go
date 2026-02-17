@@ -25,8 +25,12 @@ type VultrAPIClients struct {
 	BareMetalServers govultr.BareMetalServerService
 	LoadBalancers    govultr.LoadBalancerService
 	// Deprecated: VPC2 is no longer supported
-	VPC2s     govultr.VPC2Service //nolint:staticcheck
-	VPCs      govultr.VPCService
-	SSHKeys   govultr.SSHKeyService
-	Snapshots govultr.SnapshotService
+	VPC2s          govultr.VPC2Service //nolint:staticcheck
+	VPCs           govultr.VPCService
+	SSHKeys        govultr.SSHKeyService
+	Snapshots      govultr.SnapshotService
+	StartupScripts govultr.StartupScriptService
+	ReservedIPs    govultr.ReservedIPService
+	FirewallGroups govultr.FirewallGroupService
+	FirewallRules  govultr.FireWallRuleService
 }

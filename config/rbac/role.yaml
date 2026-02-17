@@ -38,7 +38,11 @@ rules:
   resources:
   - vultrbaremetalmachines
   - vultrclusters
+  - vultrfirewallgroups
   - vultrmachines
+  - vultrreservedips
+  - vultrstartupscripts
+  - vultrvpcs
   verbs:
   - create
   - delete
@@ -59,7 +63,11 @@ rules:
   resources:
   - vultrbaremetalmachines/status
   - vultrclusters/status
+  - vultrfirewallgroups/status
   - vultrmachines/status
+  - vultrreservedips/status
+  - vultrstartupscripts/status
+  - vultrvpcs/status
   verbs:
   - get
   - patch

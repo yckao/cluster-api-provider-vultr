@@ -139,6 +139,38 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "VultrBareMetalMachine")
 		os.Exit(1)
 	}
+	if err = (&controllers.VultrVPCReconciler{
+		Client:           mgr.GetClient(),
+		ReconcileTimeout: reconcileTimeout,
+		Recorder:         mgr.GetEventRecorderFor("vultrvpc-controller"),
+	}).SetupWithManager(ctx, mgr, controller.Options{}); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "VultrVPC")
+		os.Exit(1)
+	}
+	if err = (&controllers.VultrStartupScriptReconciler{
+		Client:           mgr.GetClient(),
+		ReconcileTimeout: reconcileTimeout,
+		Recorder:         mgr.GetEventRecorderFor("vultrstartupscript-controller"),
+	}).SetupWithManager(ctx, mgr, controller.Options{}); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "VultrStartupScript")
+		os.Exit(1)
+	}
+	if err = (&controllers.VultrFirewallGroupReconciler{
+		Client:           mgr.GetClient(),
+		ReconcileTimeout: reconcileTimeout,
+		Recorder:         mgr.GetEventRecorderFor("vultrfirewallgroup-controller"),
+	}).SetupWithManager(ctx, mgr, controller.Options{}); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "VultrFirewallGroup")
+		os.Exit(1)
+	}
+	if err = (&controllers.VultrReservedIPReconciler{
+		Client:           mgr.GetClient(),
+		ReconcileTimeout: reconcileTimeout,
+		Recorder:         mgr.GetEventRecorderFor("vultrreservedip-controller"),
+	}).SetupWithManager(ctx, mgr, controller.Options{}); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "VultrReservedIP")
+		os.Exit(1)
+	}
 	//+kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {

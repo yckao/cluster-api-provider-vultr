@@ -61,6 +61,22 @@ func NewClusterScope(params ClusterScopeParams) (*ClusterScope, error) {
 		params.BareMetalServers = vultrClient.BareMetalServer
 	}
 
+	if params.StartupScripts == nil {
+		params.StartupScripts = vultrClient.StartupScript
+	}
+
+	if params.ReservedIPs == nil {
+		params.ReservedIPs = vultrClient.ReservedIP
+	}
+
+	if params.FirewallGroups == nil {
+		params.FirewallGroups = vultrClient.FirewallGroup
+	}
+
+	if params.FirewallRules == nil {
+		params.FirewallRules = vultrClient.FirewallRule
+	}
+
 	helper, err := patch.NewHelper(params.VultrCluster, params.Client)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to init patch helper")

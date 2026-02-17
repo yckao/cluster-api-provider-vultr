@@ -1,0 +1,167 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.17.1
+  name: vultrfirewallgroups.infrastructure.cluster.x-k8s.io
+spec:
+  group: infrastructure.cluster.x-k8s.io
+  names:
+    categories:
+    - cluster-api
+    kind: VultrFirewallGroup
+    listKind: VultrFirewallGroupList
+    plural: vultrfirewallgroups
+    singular: vultrfirewallgroup
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - description: FirewallGroup is ready
+      jsonPath: .status.ready
+      name: Ready
+      type: string
+    - description: Vultr FirewallGroup ID
+      jsonPath: .status.id
+      name: ID
+      type: string
+    - description: Number of firewall rules
+      jsonPath: .status.ruleCount
+      name: Rules
+      type: integer
+    name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: VultrFirewallGroup is the Schema for the vultrfirewallgroups
+          API.
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: VultrFirewallGroupSpec defines the desired state of VultrFirewallGroup.
+            properties:
+              description:
+                description: Description is an optional description for the firewall
+                  group.
+                type: string
+              rules:
+                description: Rules is a list of firewall rules to create in this group.
+                items:
+                  description: VultrFirewallRuleSpec defines a firewall rule to be
+                    created within the group.
+                  properties:
+                    ipType:
+                      description: 'IPType is the IP type: "v4" or "v6".'
+                      type: string
+                    notes:
+                      description: Notes is optional notes for the rule.
+                      type: string
+                    port:
+                      description: Port is the port or port range (e.g. "8080" or
+                        "8080:8085").
+                      type: string
+                    protocol:
+                      description: 'Protocol is the protocol: "tcp", "udp", or "icmp".'
+                      type: string
+                    source:
+                      description: Source is the source string if applicable.
+                      type: string
+                    subnet:
+                      description: Subnet is the IP address representing a subnet.
+                      type: string
+                    subnetSize:
+                      description: SubnetSize is the number of bits for the netmask.
+                      type: integer
+                  required:
+                  - ipType
+                  - protocol
+                  - subnet
+                  - subnetSize
+                  type: object
+                type: array
+            type: object
+          status:
+            description: VultrFirewallGroupStatus defines the observed state of VultrFirewallGroup.
+            properties:
+              conditions:
+                description: Conditions defines current service state of the VultrFirewallGroup.
+                items:
+                  description: Condition defines an observation of a Cluster API resource
+                    operational state.
+                  properties:
+                    lastTransitionTime:
+                      description: |-
+                        lastTransitionTime is the last time the condition transitioned from one status to another.
+                        This should be when the underlying condition changed. If that is not known, then using the time when
+                        the API field changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: |-
+                        message is a human readable message indicating details about the transition.
+                        This field may be empty.
+                      maxLength: 10240
+                      minLength: 1
+                      type: string
+                    reason:
+                      description: |-
+                        reason is the reason for the condition's last transition in CamelCase.
+                        The specific API may choose whether or not this field is considered a guaranteed API.
+                        This field may be empty.
+                      maxLength: 256
+                      minLength: 1
+                      type: string
+                    severity:
+                      description: |-
+                        severity provides an explicit classification of Reason code, so the users or machines can immediately
+                        understand the current situation and act accordingly.
+                        The Severity field MUST be set only when Status=False.
+                      maxLength: 32
+                      type: string
+                    status:
+                      description: status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions
+                        can be useful (see .node.status.conditions), the ability to deconflict is important.
+                      maxLength: 256
+                      minLength: 1
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - status
+                  - type
+                  type: object
+                type: array
+              id:
+                description: ID is the Vultr firewall group ID.
+                type: string
+              ready:
+                description: Ready denotes that the firewall group is ready.
+                type: boolean
+              ruleCount:
+                description: RuleCount is the number of rules in the firewall group.
+                type: integer
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
